@@ -1,0 +1,910 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="">
+<!--<![endif]-->
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Telstra Network Disruptions</title>
+    <meta name="description" content="CarInsurance">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="apple-touch-icon" href="https://i.imgur.com/QRAUqs9.png">
+    <link rel="shortcut icon" href="https://i.imgur.com/QRAUqs9.png">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.0/normalize.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lykmapipo/themify-icons@0.1.2/css/themify-icons.css">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/pixeden-stroke-7-icon@1.2.3/pe-icon-7-stroke/dist/pe-icon-7-stroke.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.0/css/flag-icon.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css">
+    <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css"> -->
+
+    <!-- <link rel="stylesheet" href="static/css/cs-skin-elastic.css"> -->
+    <link rel="stylesheet" href="{{url_for('static', filename='css_/cs-skin-elastic.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css_/cs-skin-elastic.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css_/lib/datatable/dataTables.bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css_/lib/datatable/buttons.bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css_/lib/datatable/buttons.dataTables.min.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css_/style.css')}}">
+
+    
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script> -->
+
+   <!-- css bootstrap4 table -->
+    
+    <style>
+        #weatherWidget .currentDesc {
+            color: #ffffff !important;
+        }
+
+        .traffic-chart {
+            min-height: 335px;
+        }
+
+        #flotPie1 {
+            height: 150px;
+        }
+
+        #flotPie1 td {
+            padding: 3px;
+        }
+
+        #flotPie1 table {
+            top: 20px !important;
+            right: -10px !important;
+        }
+
+        .chart-container {
+            display: table;
+            min-width: 270px;
+            text-align: left;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        #flotLine5 {
+            height: 105px;
+        }
+
+        #flotBarChart {
+            height: 150px;
+        }
+
+        #cellPaiChart {
+            height: 160px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Left Panel -->
+    <aside id="left-panel" class="left-panel">
+        <nav class="navbar navbar-expand-sm navbar-default">
+            <div id="main-menu" class="main-menu collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <a href="http://127.0.0.1:5000/"><i class="menu-icon fa fa-th"></i>Home </a>
+                    </li>
+                    <li class="menu-title">
+                        <a href="http://127.0.0.1:5000/predict"><i class="menu-icon fa fa-cogs"></i>Predict</a>
+                    </li><!-- /.menu-title -->
+
+                    <!-- <li class="menu-title">
+                        <a href="http://127.0.0.1:5000/statictis">Báo cáo & thống kê</a>
+                    </li> -->
+
+
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </nav>
+    </aside>
+    <!-- /#left-panel -->
+    <!-- Right Panel -->
+    <div id="right-panel" class="right-panel">
+        <!-- Header-->
+        <header id="header" class="header">
+            <div class="top-left">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="../"><img src="{{url_for( 'static', filename='images/telstra.png')}}" style="height: 40px;" alt="Logo"></a>
+                    <a class="navbar-brand hidden" href="../"><img src="{{url_for('static', filename='images/logo.png')}}" alt="Logo"></a>
+                    <a id="menuToggle" class="menutoggle"><i class="fa fa-bars"></i></a>
+                </div>
+            </div>
+            <div class="top-right">
+                <div class="header-menu">
+                    <div class="header-left">
+                        <button class="search-trigger"><i class="fa fa-search"></i></button>
+                        <div class="form-inline">
+                            <form class="search-form">
+                                <input class="form-control mr-sm-2" type="text" placeholder="Search ..."
+                                    aria-label="Search">
+                                <button class="search-close" type="submit"><i class="fa fa-close"></i></button>
+                            </form>
+                        </div>
+
+                        <div class="dropdown for-notification">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="notification"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-bell"></i>
+                                <span class="count bg-danger">0</span>
+                            </button>
+                        </div>
+
+                        <div class="dropdown for-message">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="message"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-envelope"></i>
+                                <span class="count bg-primary">0</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="user-area dropdown float-right">
+                        <a href="#"  class="dropdown-toggle active" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img class="user-avatar rounded-circle" src="{{url_for('static',filename='images/KID.jpg')}}" alt="User Avatar">
+                            <span class="chosen-results">KID</span>
+                        </a>
+
+                        <div class="user-menu dropdown-menu">
+                            <a class="nav-link" href="#"><i class="fa fa- user"></i>My Profile</a>
+
+                            <a class="nav-link" href="#"><i class="fa fa- user"></i>Notifications <span class="count">13</span></a>
+
+                            <a class="nav-link" href="#"><i class="fa fa -cog"></i>Settings</a>
+
+                            <a class="nav-link" href="#"><i class="fa fa-power -off"></i>Logout</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </header>
+        <!-- /#header -->
+        <!-- Content -->
+        {% if request.method == 'GET'%}
+        <div class="content" style="padding-top: 10px; background-color: #aaecdc;">
+            <div class="animated fadeIn" >
+                <!-- Widgets  -->
+                <div class="row" >
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="stat-widget-five">
+                                    <div class="stat-icon dib flat-color-3">
+                                        <i class="fa fa-list"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <div class="text-left dib">
+                                            <div class="stat-text"><span class="count">{{len(results_id)}}</span></div>
+                                            <div class="stat-heading">ID</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="stat-widget-five">
+                                    <div class="stat-icon dib flat-color-3">
+                                        <i class="fa fa-map-marker"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <div class="text-left dib">
+                                            <div class="stat-text"><span class="count">{{len(results_location)}}</span></div>
+                                            <div class="stat-heading">Location</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="animated fadeIn">
+                <div class="row">
+                    <div class="col span-1-of-1">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="mb-3">Location</h4>
+                                <canvas id="Location-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="mb-3">Feature</h4>
+                                <canvas id="Feature-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="mb-3">Event</h4>
+                                <canvas id="Event-chart"></canvas>
+                                <!-- <div id="Education-chart"></div> -->
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="mb-3">Severity</h4>
+                                <canvas id="Severity-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="mb-3">Resource</h4>
+                                <canvas id="Resource-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>            
+        </div>
+
+        <!-- id="bootstrap-data-table" class="table table-striped table-bordered" -->
+        <div class="content" style="background-color: #aaecdc;" >                         
+                                                
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6" style="padding: 0px;">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="card-header">
+                                    <strong class="card-title">Location Data</strong>
+                                </div>
+                                <table id="Location" class="display table table-striped table-bordered">                               
+                                    <thead>
+                                        <tr>
+                                            {% for header in test_fieldnames %}
+                                            <th>{{header}}</th>
+                                            {% endfor %}
+                                        </tr>
+                                    </thead>
+    
+                                    <tbody>
+                                        {% for row in range(len(data)) %}
+                                        <tr>
+                                            {% for index in range(0, len(test_fieldnames)) %}
+                                            <td>{{data[test_fieldnames[index]].values[row]}}</td>
+                                            {% endfor %}
+    
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="card-header">
+                                    <strong class="card-title">Event Data</strong>
+                                </div>
+                                <table id="Event" class="table table-striped table-bordered">                               
+                                    <thead>
+                                        <tr>
+                                            {% for header in event_fieldnames %}
+                                            <th>{{header}}</th>
+                                            {% endfor %}
+                                        </tr>
+                                    </thead>
+    
+                                    <tbody>
+                                        {% for row in range(len(event_data)) %}
+                                        <tr>
+                                            {% for index in range(0, len(event_fieldnames)) %}
+                                            <td>{{event_data[event_fieldnames[index]].values[row]}}</td>
+                                            {% endfor %}
+    
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6" style="padding: 0px;">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="card-header">
+                                    <strong class="card-title">Log Feature Data</strong>
+                                </div>
+                                <table id="Feature" class="display table table-striped table-bordered">                               
+                                    <thead>
+                                        <tr>
+                                            {% for header in feature_fieldnames %}
+                                            <th>{{header}}</th>
+                                            {% endfor %}
+                                        </tr>
+                                    </thead>
+    
+                                    <tbody>
+                                        {% for row in range(len(feature_data)) %}
+                                        <tr>
+                                            {% for index in range(0, len(feature_fieldnames)) %}
+                                            <td>{{feature_data[feature_fieldnames[index]].values[row]}}</td>
+                                            {% endfor %}
+    
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6" >
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="card-header">
+                                    <strong class="card-title">Severity Data</strong>
+                                </div>
+                                <table id="Severity" class="display table table-striped table-bordered">                               
+                                    <thead>
+                                        <tr>
+                                            {% for header in severity_fieldnames %}
+                                            <th>{{header}}</th>
+                                            {% endfor %}
+                                        </tr>
+                                    </thead>
+    
+                                    <tbody>
+                                        {% for row in range(len(severity_data)) %}
+                                        <tr>
+                                            {% for index in range(0, len(severity_fieldnames)) %}
+                                            <td>{{severity_data[severity_fieldnames[index]].values[row]}}</td>
+                                            {% endfor %}
+    
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6" style="padding: 0px;">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="card-header">
+                                    <strong class="card-title">Resource Data</strong>
+                                </div>
+                                <table id="Resource" class="display table table-striped table-bordered">                               
+                                    <thead>
+                                        <tr>
+                                            {% for header in resource_fieldnames %}
+                                            <th>{{header}}</th>
+                                            {% endfor %}
+                                        </tr>
+                                    </thead>
+    
+                                    <tbody>
+                                        {% for row in range(len(resource_data)) %}
+                                        <tr>
+                                            {% for index in range(0, len(resource_fieldnames)) %}
+                                            <td>{{resource_data[resource_fieldnames[index]].values[row]}}</td>
+                                            {% endfor %}
+    
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>        
+        {% endif %}
+    </div>
+    <!-- /#right-panel -->
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@2.2.4/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.4/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-match-height@0.7.2/dist/jquery.matchHeight.min.js"></script>
+    <script src="{{ url_for( 'static', filename ='js/main.js')}}"></script>
+    <!--  Chart js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.7.3/dist/Chart.bundle.min.js"></script>
+    <script src="{{ url_for( 'static', filename ='js/init/chartjs-init.js')}}"></script>
+    <!--Flot Chart-->
+    <script src="https://cdn.jsdelivr.net/npm/jquery.flot@0.8.3/jquery.flot.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flot-spline@0.0.1/js/jquery.flot.spline.min.js"></script>
+    <!-- -- -->
+    
+
+    <!-- --- -->
+    <script src="https://cdn.jsdelivr.net/npm/simpleweather@3.1.0/jquery.simpleWeather.min.js"></script>
+    <script src="{{url_for('static', filename='js/init/weather-init.js')}}"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.9.0/dist/fullcalendar.min.js"></script>
+    <script src="{{url_for('static', filename='js/init/fullcalendar-init.js')}}"></script>
+
+    <!-- bootstrap table -->
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+    <script src="{{url_for('static', filename='js/lib/data-table/datatables.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/lib/data-table/dataTables.bootstrap.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/lib/data-table/dataTables.buttons.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/lib/data-table/buttons.bootstrap.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/lib/data-table/jszip.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/lib/data-table/vfs_fonts.js')}}"></script>
+    <script src="{{url_for('static', filename='js/lib/data-table/buttons.html5.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/lib/data-table/buttons.print.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/lib/data-table/buttons.colVis.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/init/datatables-init.js')}}"></script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+          $('#bootstrap-data-table-export').DataTable();
+      } );
+  </script>
+
+    <script type="text/javascript">
+        $('#Location').DataTable({ 
+            "scrollY": "600px",            
+            "scrollCollapse": true,
+            "pagingType": "numbers"
+         });
+    </script>
+
+    <script type="text/javascript">
+        $('#Event').DataTable({ 
+            "scrollY": "600px",            
+            "scrollCollapse": true,
+            "pagingType": "numbers"
+         });
+    </script>
+
+    <script type="text/javascript">
+        $('#Feature').DataTable({ 
+            "scrollY": "600px",            
+            "scrollCollapse": true,
+            "pagingType": "numbers"
+         });
+    </script>
+
+    <script type="text/javascript">
+        $('#Severity').DataTable({ 
+            "scrollY": "600px",            
+            "scrollCollapse": true,
+            "pagingType": "numbers"
+         });
+    </script>
+
+    <script type="text/javascript">
+        $('#Resource').DataTable({ 
+            "scrollY": "600px",            
+            "scrollCollapse": true,
+            "pagingType": "numbers"
+         });
+    </script>
+
+    <!-- <script>
+    var ctx = document.getElementById( "Location-chart" );
+    ctx.height = 150;
+    var myChart = new Chart( ctx, {
+        type: 'bar',
+        data: {
+            labels: [{% for item in labels_location %}
+                "{{ item }}",
+               {% endfor %} ],
+            datasets: [
+                {
+                    label: "My First dataset",
+                    data: [{% for item in values_location %}
+                    "{{ item }}",
+                {% endfor %}],
+                    borderColor: "rgba(0, 194, 146, 0.9)",
+                    borderWidth: "0",
+                    backgroundColor: "rgba(0, 194, 146, 0.5)"
+                            }
+                        ]
+        },
+        options: {
+            scales: {
+                yAxes: [ {
+                    ticks: {
+                        beginAtZero: true
+                    }
+                                } ]
+            }
+        }
+    } );
+    </script> -->
+    <!-- Location chart -->
+    <script>
+        var ctx = document.getElementById("Location-chart");
+        ctx.height = 150;
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [{% for item in labels_location %}
+                "{{ item }}",
+               {% endfor %} ],
+        type: 'line',
+            defaultFontFamily: 'Montserrat',
+                datasets: [{
+                    data: [{% for item in values_location %}
+                    "{{ item }}",
+                {% endfor %}
+                ],
+                    label: "Count",
+                        backgroundColor: 'rgba(0,200,155,.35)',
+                            borderColor: 'rgba(0,200,155,0.60)',
+                                borderWidth: 3.5,
+                                    pointStyle: 'circle',
+                                        pointRadius: 5,
+                                            pointBorderColor: 'transparent',
+                                                pointBackgroundColor: 'rgba(0,200,155,0.60)',
+                }
+               
+            ]
+        },
+        options: {
+            responsive: true,
+                tooltips: {
+                mode: 'index',
+                    titleFontSize: 12,
+                        titleFontColor: '#000',
+                            bodyFontColor: '#000',
+                                backgroundColor: '#fff',
+                                    titleFontFamily: 'Montserrat',
+                                        bodyFontFamily: 'Montserrat',
+                                            cornerRadius: 3,
+                                                intersect: false,
+            },
+            legend: {
+                display: false,
+                    position: 'top',
+                        labels: {
+                    usePointStyle: true,
+                        fontFamily: 'Montserrat',
+                },
+
+
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    gridLines: {
+                        display: false,
+                        drawBorder: false
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Location'
+                    }
+                }],
+                    yAxes: [{
+                        display: true,
+                        gridLines: {
+                            display: false,
+                            drawBorder: false
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Frequency'
+                        }
+                    }]
+            },
+            title: {
+                display: false,
+            }
+        }
+    } );
+
+    </script>
+
+    <!-- Severity-chart  -->
+
+    <script>
+        var ctx = document.getElementById("Severity-chart");
+        ctx.height = 150;
+        var myChart = new Chart(ctx, {
+            type: 'pie',
+            
+            data: {
+                
+                datasets: [{
+                    data: [{% for item in values_severity %}
+                    "{{ item }}",
+                {% endfor %} ],
+            backgroundColor: [
+                "rgba(0, 194, 146,0.9)",
+                "rgba(0, 194, 146,0.7)",
+                "rgba(0, 194, 146,0.5)",
+                "rgba(0,0,0,0.07)"
+            ],
+            hoverBackgroundColor: [
+                "rgba(0, 194, 146,0.9)",
+                "rgba(0, 194, 146,0.7)",
+                "rgba(0, 194, 146,0.5)",
+                "rgba(0,0,0,0.07)"
+            ]
+
+        } ],
+            labels: [
+            {% for item in labels_severity %}
+        "{{ item }}",
+            {% endfor %}
+                    ]
+        },
+        options: {
+            responsive: true                    
+        }
+        
+    } );
+    </script>
+
+    
+
+    <!-- Featurer-chart -->
+    <script>
+        var ctx = document.getElementById("Feature-chart");
+        ctx.height = 150;
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [{% for item in labels_feature %}
+                "{{ item }}",
+               {% endfor %} ],
+        type: 'line',
+            defaultFontFamily: 'Montserrat',
+                datasets: [{
+                    data: [{% for item in values_feature %}
+                    "{{ item }}",
+                {% endfor %}
+                ],
+                    label: "Count",
+                        backgroundColor: 'rgba(0,200,155,.35)',
+                            borderColor: 'rgba(0,200,155,0.60)',
+                                borderWidth: 3.5,
+                                    pointStyle: 'circle',
+                                        pointRadius: 5,
+                                            pointBorderColor: 'transparent',
+                                                pointBackgroundColor: 'rgba(0,200,155,0.60)',
+                }
+               
+            ]
+        },
+        options: {
+            responsive: true,
+                tooltips: {
+                mode: 'index',
+                    titleFontSize: 12,
+                        titleFontColor: '#000',
+                            bodyFontColor: '#000',
+                                backgroundColor: '#fff',
+                                    titleFontFamily: 'Montserrat',
+                                        bodyFontFamily: 'Montserrat',
+                                            cornerRadius: 3,
+                                                intersect: false,
+            },
+            legend: {
+                display: false,
+                    position: 'top',
+                        labels: {
+                    usePointStyle: true,
+                        fontFamily: 'Montserrat',
+                },
+
+
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    gridLines: {
+                        display: false,
+                        drawBorder: false
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Feature'
+                    }
+                }],
+                    yAxes: [{
+                        display: true,
+                        gridLines: {
+                            display: false,
+                            drawBorder: false
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Frequency'
+                        }
+                    }]
+            },
+            title: {
+                display: false,
+            }
+        }
+    } );
+
+    </script>
+
+    <!-- Event chart -->
+    <script>
+        var ctx = document.getElementById("Event-chart");
+        ctx.height = 150;
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [{% for item in labels_event %}
+                "{{ item }}",
+               {% endfor %}  ],
+        type: 'line',
+            defaultFontFamily: 'Montserrat',
+                datasets: [{
+                    label: "Count",
+                    data: [{% for item in values_event %}
+                    "{{ item }}",
+                {% endfor %}],
+                    backgroundColor: 'transparent',
+                        borderColor: 'rgba(220,53,69,0.75)',
+                            borderWidth: 3,
+                                pointStyle: 'circle',
+                                    pointRadius: 5,
+                                        pointBorderColor: 'transparent',
+                                            pointBackgroundColor: 'rgba(220,53,69,0.75)',
+                    }]
+        },
+        options: {
+            responsive: true,
+
+                tooltips: {
+                mode: 'index',
+                    titleFontSize: 12,
+                        titleFontColor: '#000',
+                            bodyFontColor: '#000',
+                                backgroundColor: '#fff',
+                                    titleFontFamily: 'Montserrat',
+                                        bodyFontFamily: 'Montserrat',
+                                            cornerRadius: 3,
+                                                intersect: false,
+            },
+            legend: {
+                display: false,
+                    labels: {
+                    usePointStyle: true,
+                        fontFamily: 'Montserrat',
+                },
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    gridLines: {
+                        display: false,
+                        drawBorder: false
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Event'
+                    }
+                }],
+                    yAxes: [{
+                        display: true,
+                        gridLines: {
+                            display: false,
+                            drawBorder: false
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Frequency'
+                        }
+                    }]
+            },
+            title: {
+                display: false,
+            }
+        }
+    } );
+    </script>
+
+    <!-- Resource chart -->
+    <script>
+        var ctx = document.getElementById("Resource-chart");
+        ctx.height = 150;
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [{% for item in labels_resource %}
+                "{{ item }}",
+               {% endfor %}  ],
+        type: 'line',
+            defaultFontFamily: 'Montserrat',
+                datasets: [{
+                    label: "Count",
+                    data: [{% for item in values_resource %}
+                    "{{ item }}",
+                {% endfor %}],
+                    backgroundColor: 'transparent',
+                        borderColor: 'rgba(220,53,69,0.75)',
+                            borderWidth: 3,
+                                pointStyle: 'circle',
+                                    pointRadius: 5,
+                                        pointBorderColor: 'transparent',
+                                            pointBackgroundColor: 'rgba(220,53,69,0.75)',
+                    }]
+        },
+        options: {
+            responsive: true,
+
+                tooltips: {
+                mode: 'index',
+                    titleFontSize: 12,
+                        titleFontColor: '#000',
+                            bodyFontColor: '#000',
+                                backgroundColor: '#fff',
+                                    titleFontFamily: 'Montserrat',
+                                        bodyFontFamily: 'Montserrat',
+                                            cornerRadius: 3,
+                                                intersect: false,
+            },
+            legend: {
+                display: false,
+                    labels: {
+                    usePointStyle: true,
+                        fontFamily: 'Montserrat',
+                },
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    gridLines: {
+                        display: false,
+                        drawBorder: false
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Resource'
+                    }
+                }],
+                    yAxes: [{
+                        display: true,
+                        gridLines: {
+                            display: false,
+                            drawBorder: false
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Frequency'
+                        }
+                    }]
+            },
+            title: {
+                display: false,
+            }
+        }
+    } );
+    </script>
+
+
+</body>
+
+</html>
