@@ -1,7 +1,8 @@
-from flask import Flask, render_template, url_for, request
+from flask import Flask, render_template, url_for, request, jsonify
 import pandas as pd
 from model import predict
 from flask import config
+import json
 
 app = Flask(__name__)
 
@@ -101,6 +102,29 @@ def predict_test():
     return render_template('predict.html',test_fieldnames=test_fieldnames,labels_location=labels_location,values_location=values_location,data=test,
     labels_predict=labels_predict,values_predict=values_predict,results_location=test_location, results_id=test_id, len = len)
 
+# @app.route('/predict_data', methods=['GET'])
+# def get_data_predict():
+#     if request.method=='GET':
+#         test = pd.read_csv('data/test1.csv', index_col=0)   
+#         submission = predict.predict_data(test)
+#         test = pd.read_csv('data/submission.csv')
+#         test_fieldnames = test.columns.values
+#         test_id = list(test['id'].value_counts())
+#         test_location = list(test['location'].value_counts())
+#         test1 = test
+#         # test1['location'] = [l.replace('location ', '')
+#         #                      for l in test1['location']]
+#         # test1['location'] = test1['location'].astype('int')    
+#         location = test1['location'].value_counts()
+#         location = pd.DataFrame.sort_index(location, ascending=True, axis=0)
+#         labels_location = list(location.index)
+#         values_location = list(location.values)
+#         print(labels_location)
+#         predict_disruptions = test['predict_disruptions'].value_counts()
+#         labels_predict = predict_disruptions.index.values
+#         values_predict = predict_disruptions.values
+
+#     return jsonify(payload=json.dumps({'labels_location':labels_location, 'values_location':values_location}))
 
 if __name__ == "__main__":
     app.run(debug=True)
